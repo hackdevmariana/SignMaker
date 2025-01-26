@@ -1,0 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+
+:root{
+    --no-white: azure;
+    --no-black: #131313;
+}
+
+.menu-input{
+    background-color: var(--no-white);
+    color: var(--no-black);
+    border-radius: 10px;
+}
