@@ -3,6 +3,6 @@ export default defineNuxtConfig({
   modules: ['@pinia/nuxt'],
   devtools: { enabled: true },
   css: [
-    '@/assets/css/style.css' // Agrega el archivo CSS global aquí
+    '@/assets/css/style.css' 
   ]
 })

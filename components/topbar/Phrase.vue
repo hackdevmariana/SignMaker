@@ -12,18 +12,15 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import { storeToRefs } from 'pinia';
+import { usePhraseStore } from '@/stores/usePhraseStore';
 
-// Definir variable reactiva
-const phrase = ref("");
+// Acceder al store
+const phraseStore = usePhraseStore();
+const { text: phrase } = storeToRefs(phraseStore); // Hacer reactivo el estado
 
-// Observar cambios en la variable y mostrarlos en consola
+// Observar cambios y mostrarlos en consola
 watch(phrase, (newValue) => {
-  console.log("📝 Texto ingresado:", newValue);
-});
-
-// Mensaje cuando el componente se monta
-onMounted(() => {
-  console.log("✅ Phrase.vue montado correctamente.");
+  console.log("📝 Texto almacenado en Pinia:", newValue);
 });
 </script>
