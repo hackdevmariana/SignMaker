@@ -1,6 +1,5 @@
 <template>
     <div class="flex items-center space-x-2">
-      <label for="font" class="text-sm text-white">Fuente:</label>
       <select id="font" v-model="font" class="p-1 border rounded">
         <option value="Arial">Arial</option>
         <option value="Verdana">Verdana</option>

@@ -1,11 +1,10 @@
 <template>
-    <div class="flex items-center space-x-2">
-      <label for="background" class="text-sm text-white">Fondo:</label>
-      <input
-        id="background"
-        type="color"
-        v-model="background"
-        class="w-8 h-8 border rounded-full"
+    <div class="d-flex align-items-center gap-2">
+      <input 
+        type="color" 
+        v-model="backgroundColor" 
+        class="form-control form-control-color border rounded-circle"
+        title="Color de fondo" 
       />
     </div>
   </template>
@@ -14,7 +13,8 @@
   import { storeToRefs } from 'pinia';
   import { useAnimationStore } from '@/stores/useAnimationStore';
   
+  // Acceder al store
   const animationStore = useAnimationStore();
-  const { background } = storeToRefs(animationStore);
+  const { backgroundColor1: backgroundColor } = storeToRefs(animationStore);
   </script>
   

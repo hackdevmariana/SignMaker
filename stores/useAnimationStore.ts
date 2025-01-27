@@ -2,24 +2,32 @@ import { defineStore } from 'pinia';
 
 export const useAnimationStore = defineStore('animation', {
   state: () => ({
-    duration: 3, // Duración en segundos
-    background: '#000000', // Color de fondo
-    textColor: '#FFFFFF', // Color del texto
-    shadowColor: '#000000', // Color de la sombra del texto
-    font: 'Arial', // Fuente predeterminada
+    textColor: '#FFFFFF',
+    shadowColor: '#000000',
+    backgroundColor1: '#000000',
+    backgroundColor2: '#FFFFFF',
+    backgroundType: 'solid', // "solid", "linear", "radial", etc.
+    linearDirection: 'to bottom', // Dirección para degradado lineal
+    font: 'Arial'
   }),
   actions: {
-    setDuration(time: number) {
-      this.duration = time;
-    },
-    setBackground(color: string) {
-      this.background = color;
-    },
     setTextColor(color: string) {
       this.textColor = color;
     },
     setShadowColor(color: string) {
       this.shadowColor = color;
+    },
+    setBackgroundColor1(color: string) {
+      this.backgroundColor1 = color;
+    },
+    setBackgroundColor2(color: string) {
+      this.backgroundColor2 = color;
+    },
+    setBackgroundType(type: string) {
+      this.backgroundType = type;
+    },
+    setLinearDirection(direction: string) {
+      this.linearDirection = direction;
     },
     setFont(font: string) {
       this.font = font;

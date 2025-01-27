@@ -1,26 +1,16 @@
 <template>
-    <div class="flex items-center space-x-2">
-      <label class="text-sm text-white">Texto:</label>
-      <input
-        type="color"
-        v-model="textColor"
-        class="w-8 h-8 border rounded-full"
-      />
-  
-      <label class="text-sm text-white">Sombra:</label>
-      <input
-        type="color"
-        v-model="shadowColor"
-        class="w-8 h-8 border rounded-full"
-      />
+    <div class="d-flex align-items-center gap-2">
+        <input type="color" v-model="textColor" class="form-control form-control-color border rounded-circle"
+            title="Color del texto" />
+        <input type="color" v-model="shadowColor" class="form-control form-control-color border rounded-circle"
+            title="Color de la sombra" />
     </div>
-  </template>
-  
-  <script setup>
-  import { storeToRefs } from 'pinia';
-  import { useAnimationStore } from '@/stores/useAnimationStore';
-  
-  const animationStore = useAnimationStore();
-  const { textColor, shadowColor } = storeToRefs(animationStore);
-  </script>
-  
+</template>
+
+<script setup>
+import { storeToRefs } from 'pinia';
+import { useAnimationStore } from '@/stores/useAnimationStore';
+
+const animationStore = useAnimationStore();
+const { textColor, shadowColor } = storeToRefs(animationStore);
+</script>
