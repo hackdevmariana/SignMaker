@@ -1,8 +1,8 @@
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
-  modules: ['@pinia/nuxt'],
+  modules: ['@pinia/nuxt', 'usebootstrap'],
   devtools: { enabled: true },
   css: [
-    '@/assets/css/style.css' 
+    '@/assets/css/style.css',
   ]
 })
