@@ -1,13 +1,16 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Open+Sans:wght@400;700&family=Lato:wght@400;700&family=Montserrat:wght@400;700&family=Poppins:wght@400;700&display=swap');
 
-
-:root{
+:root {
     --no-white: azure;
     --no-black: #131313;
 }
 
-.menu-input{
+.menu-input {
     background-color: var(--no-white);
     color: var(--no-black);
     border-radius: 10px;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
 }

@@ -1,7 +1,7 @@
 <template>
-    <div class="d-flex align-items-center justify-content-center"
+    <div class="d-flex align-items-center justify-content-center border"
          :style="{
-           background: generateBackground(),
+           background: backgroundColor1, 
            width: `${width}px`, 
            height: `${height}px`
          }">
@@ -10,7 +10,7 @@
   </template>
   
   <script setup>
-  import { ref, watch, onMounted } from 'vue';
+  import { ref, watch, onMounted, nextTick } from 'vue';
   import { storeToRefs } from 'pinia';
   import { usePhraseStore } from '@/stores/usePhraseStore';
   import { useAnimationStore } from '@/stores/useAnimationStore';
@@ -21,60 +21,57 @@
   const { text: phrase } = storeToRefs(phraseStore);
   
   const animationStore = useAnimationStore();
-  const { backgroundColor1, backgroundColor2, backgroundType, linearDirection, textColor, shadowColor, font } = storeToRefs(animationStore);
+  const { textColor, shadowColor, font, fontSize, backgroundColor1 } = storeToRefs(animationStore);
   
   const orientationStore = useOrientationStore();
   const { width, height } = storeToRefs(orientationStore);
   
   const canvasRef = ref(null);
   
-  // Redibujar el texto cuando cambian el fondo, la frase o la configuración del texto
-  watch([phrase, backgroundColor1, backgroundColor2, backgroundType, textColor, shadowColor, font], () => {
-    drawTextOnCanvas();
-  });
-  
   // Función para dibujar el texto en el canvas
   const drawTextOnCanvas = () => {
     const canvas = canvasRef.value;
-    if (!canvas) return;
+    if (!canvas) {
+      console.error("❌ Canvas no encontrado.");
+      return;
+    }
   
     canvas.width = width.value;
     canvas.height = height.value;
   
     const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    if (!ctx) {
+      console.error("❌ No se pudo obtener el contexto 2D.");
+      return;
+    }
   
-    // Limpiar el canvas antes de dibujar
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Aplicar el fondo al canvas
+    ctx.fillStyle = backgroundColor1.value;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
   
-    // Aplicar estilos de texto
+    // Dibujar el texto
     ctx.fillStyle = textColor.value;
-    ctx.font = `30px ${font.value}`;
+    ctx.font = `${fontSize.value}px "${font.value}", sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.shadowColor = shadowColor.value;
     ctx.shadowBlur = 5;
   
-    // Dibujar el texto en el centro del canvas
     ctx.fillText(phrase.value, canvas.width / 2, canvas.height / 2);
   };
   
-  // Redibujar al montar el componente
-  onMounted(() => {
+  // Redibujar cuando cambian los valores
+  watch([phrase, textColor, shadowColor, font, fontSize, backgroundColor1], async (newValues, oldValues) => {
+    console.log(`📢 Redibujando canvas:`, newValues);
+    await nextTick();
     drawTextOnCanvas();
   });
   
-  // Generar el fondo dinámico
-  const generateBackground = () => {
-    switch (backgroundType.value) {
-      case 'linear': return `linear-gradient(${linearDirection.value}, ${backgroundColor1.value}, ${backgroundColor2.value})`;
-      case 'radial': return `radial-gradient(${backgroundColor1.value}, ${backgroundColor2.value})`;
-      case 'conic': return `conic-gradient(${backgroundColor1.value}, ${backgroundColor2.value})`;
-      case 'repeating-linear': return `repeating-linear-gradient(${linearDirection.value}, ${backgroundColor1.value}, ${backgroundColor2.value} 20%)`;
-      case 'repeating-radial': return `repeating-radial-gradient(${backgroundColor1.value}, ${backgroundColor2.value} 20%)`;
-      case 'repeating-conic': return `repeating-conic-gradient(${backgroundColor1.value}, ${backgroundColor2.value} 20%)`;
-      default: return backgroundColor1.value;
-    }
-  };
+  // Dibujar al montar el componente
+  onMounted(async () => {
+    console.log("✅ Canvas montado correctamente.");
+    await nextTick();
+    drawTextOnCanvas();
+  });
   </script>
   

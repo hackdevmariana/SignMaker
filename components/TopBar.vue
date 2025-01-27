@@ -8,7 +8,8 @@
           <ColorsBackground />
           <ColorsTexts />
           <Fonts />
-          <Orientation /> <!-- Nuevo selector de orientación -->
+          <FontSize />
+          <Orientation /> 
         </div>
       </div>
     </nav>
@@ -21,5 +22,6 @@
   import ColorsTexts from './topbar/ColorsTexts.vue';
   import Fonts from './topbar/Fonts.vue';
   import Orientation from './topbar/Orientation.vue';
+import FontSize from './topbar/FontSize.vue';
   </script>
   
