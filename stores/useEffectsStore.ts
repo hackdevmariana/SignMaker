@@ -3,11 +3,11 @@ import { defineStore } from 'pinia';
 
 export const useEffectsStore = defineStore('effects', {
   state: () => ({
-    activeEffect: 'fade-in', // Efecto predeterminado
+    activeEffects: [] // Ahora es un array
   }),
   actions: {
-    setEffect(effect) {
-      this.activeEffect = effect;
+    setEffects(effects: string[]) {
+      this.activeEffects = effects;
     }
   }
 });
