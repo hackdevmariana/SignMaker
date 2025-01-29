@@ -10,6 +10,7 @@
           <Fonts />
           <FontSize />
           <Orientation /> 
+          <Effects />
         </div>
       </div>
     </nav>
@@ -23,5 +24,6 @@
   import Fonts from './topbar/Fonts.vue';
   import Orientation from './topbar/Orientation.vue';
 import FontSize from './topbar/FontSize.vue';
+import Effects from './Effects.vue';
   </script>
   
