@@ -43,7 +43,7 @@ const effectsStore = useEffectsStore();
 const isOpen = ref(false);
 const selectedEffects = ref([]);
 
-// Lista de efectos disponibles
+// Lista de efectos disponibles (nuevos efectos añadidos)
 const availableEffects = ref([
   "fade-in",
   "shake",
@@ -56,8 +56,16 @@ const availableEffects = ref([
   "wave",
   "neon-glow",
   "rotate-in",
-  "stretch"
+  "stretch",
+  "drop-in",
+  "slide-in",
+  "expand",
+  "flash",
+  "pop",
+  "fade-up",
+  "random-letters"
 ]);
+
 
 // Formatear nombres para UI (Ejemplo: "fade-in" → "Fade In")
 const formatEffectName = (effect) => {
