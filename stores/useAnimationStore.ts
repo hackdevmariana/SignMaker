@@ -9,7 +9,8 @@ export const useAnimationStore = defineStore('animation', {
     backgroundType: 'solid', // "solid", "linear", "radial", etc.
     linearDirection: 'to bottom', // Dirección para degradado lineal
     font: 'Roboto', // Fuente predeterminada
-    fontSize: 30 // Tamaño de fuente predeterminado
+    fontSize: 30, // Tamaño de fuente predeterminado
+    duration: 3 // ⏳ Duración predeterminada en segundos
   }),
   actions: {
     setTextColor(color: string) {
@@ -35,6 +36,9 @@ export const useAnimationStore = defineStore('animation', {
     },
     setFontSize(size: number) {
       this.fontSize = size;
+    },
+    setDuration(value: number) { // ⏳ Acción para actualizar duration
+      this.duration = value;
     }
   }
 });

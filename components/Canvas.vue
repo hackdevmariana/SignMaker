@@ -2,6 +2,10 @@
   <div class="d-flex align-items-center justify-content-center border"
        :style="{ background: backgroundColor1, width: `${width}px`, height: `${height}px` }">
     <canvas ref="canvasRef" class="border border-white"></canvas>
+    <div ref="textRef" class="animated-text"
+         :style="{ fontSize: fontSize + 'px', fontFamily: font, color: textColor, textShadow: `2px 2px 4px ${shadowColor}` }">
+      {{ phrase }}
+    </div>
   </div>
 </template>
 
@@ -19,7 +23,7 @@ const phraseStore = usePhraseStore();
 const { text: phrase } = storeToRefs(phraseStore);
 
 const animationStore = useAnimationStore();
-const { textColor, shadowColor, font, fontSize, backgroundColor1 } = storeToRefs(animationStore);
+const { textColor, shadowColor, font, fontSize, backgroundColor1, duration } = storeToRefs(animationStore);
 
 const orientationStore = useOrientationStore();
 const { width, height } = storeToRefs(orientationStore);
@@ -28,8 +32,10 @@ const effectsStore = useEffectsStore();
 const { activeEffects } = storeToRefs(effectsStore);
 
 const canvasRef = ref(null);
+const textRef = ref(null); // Nuevo ref para animar solo el texto
 
-const drawTextOnCanvas = () => {
+// 🎨 Función para dibujar solo el fondo en el canvas
+const drawBackgroundOnCanvas = () => {
   const canvas = canvasRef.value;
   if (!canvas) return;
 
@@ -42,53 +48,79 @@ const drawTextOnCanvas = () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = backgroundColor1.value;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  ctx.fillStyle = textColor.value;
-  ctx.font = `${fontSize.value}px "${font.value}", sans-serif`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.shadowColor = shadowColor.value;
-  ctx.shadowBlur = 5;
-
-  ctx.fillText(phrase.value, canvas.width / 2, canvas.height / 2);
 };
 
-// 🔥 Aplicar efectos seleccionados
+// 🔥 Aplicar efectos solo al texto
 const applyEffects = () => {
-  console.log("Aplicando efectos:", activeEffects.value);
-  
-  if (activeEffects.value.includes('fade-in')) {
-    gsap.fromTo('canvas', { opacity: 0 }, { opacity: 1, duration: 1 });
-  }
-  if (activeEffects.value.includes('shake')) {
-    gsap.fromTo('canvas', { x: -5 }, { x: 5, duration: 0.1, repeat: 5, yoyo: true });
-  }
-  if (activeEffects.value.includes('zoom')) {
-    gsap.fromTo('canvas', { scale: 0.5 }, { scale: 1, duration: 1 });
-  }
-  if (activeEffects.value.includes('typewriter')) {
-    let currentText = '';
-    const textArray = phrase.value.split('');
-    gsap.to(textArray, {
-      duration: 2,
-      ease: 'none',
-      onUpdate: () => {
-        currentText += textArray.shift() || '';
-        drawTextOnCanvas();
-      }
-    });
-  }
+  console.log("📢 Aplicando efectos solo al texto con duración:", duration.value);
+
+  const effectsArray = [...activeEffects.value];
+
+  effectsArray.forEach(effect => {
+    switch (effect) {
+      case 'fade-in':
+        gsap.fromTo(textRef.value, { opacity: 0 }, { opacity: 1, duration: duration.value });
+        break;
+      case 'shake':
+        gsap.fromTo(textRef.value, { x: -5 }, { x: 5, duration: duration.value / 10, repeat: 5, yoyo: true });
+        break;
+      case 'zoom':
+        gsap.fromTo(textRef.value, { scale: 0.5 }, { scale: 1, duration: duration.value });
+        break;
+      case 'spin':
+        gsap.to(textRef.value, { rotateZ: 360, duration: duration.value });
+        break;
+      case 'typewriter':
+        let currentText = '';
+        const textArray = phrase.value.split('');
+        gsap.to(textArray, {
+          duration: duration.value,
+          ease: 'none',
+          onUpdate: () => {
+            currentText += textArray.shift() || '';
+            textRef.value.innerText = currentText;
+          }
+        });
+        break;
+      default:
+        console.warn(`⚠️ Efecto desconocido: ${effect}`);
+        break;
+    }
+  });
+
+  nextTick(() => {
+    drawBackgroundOnCanvas();
+  });
 };
 
-// 🔄 Observa cambios en texto y efectos
-watch([phrase, textColor, shadowColor, font, fontSize, backgroundColor1, activeEffects], async () => {
+// 🔄 Observa cambios en efectos y los aplica solo al texto
+watch(activeEffects, async () => {
+  console.log("📢 Cambió la lista de efectos:", activeEffects.value);
   await nextTick();
-  drawTextOnCanvas();
   applyEffects();
+});
+
+// 🔄 También redibuja el fondo cuando cambia el color de fondo
+watch([backgroundColor1], async () => {
+  await nextTick();
+  drawBackgroundOnCanvas();
+});
+
+// 🔄 Actualiza el tamaño de la fuente dinámicamente
+watch(fontSize, () => {
+  if (textRef.value) {
+    textRef.value.style.fontSize = `${fontSize.value}px`;
+  }
 });
 
 onMounted(async () => {
   await nextTick();
-  drawTextOnCanvas();
+  drawBackgroundOnCanvas();
 });
 </script>
+
+<style scoped>
+.animated-text {
+  position: absolute;
+}
+</style>
