@@ -1,7 +1,10 @@
 <template>
-  <div class="d-flex align-items-center justify-content-center border"
+  <div class="d-flex align-items-center justify-content-center border position-relative"
        :style="{ background: backgroundColor1, width: `${width}px`, height: `${height}px` }">
+    <!-- Lienzo de fondo -->
     <canvas ref="canvasRef" class="border border-white"></canvas>
+
+    <!-- Texto animado -->
     <div ref="textRef" class="animated-text"
          :style="{ fontSize: fontSize + 'px', fontFamily: font, color: textColor, textShadow: `2px 2px 4px ${shadowColor}` }">
       {{ phrase }}
@@ -32,27 +35,40 @@ const effectsStore = useEffectsStore();
 const { activeEffects } = storeToRefs(effectsStore);
 
 const canvasRef = ref(null);
-const textRef = ref(null); // Nuevo ref para animar solo el texto
+const textRef = ref(null);
 
-// 🎨 Función para dibujar solo el fondo en el canvas
+// 🎨 Asegurar que el lienzo de fondo se dibuja correctamente
 const drawBackgroundOnCanvas = () => {
   const canvas = canvasRef.value;
-  if (!canvas) return;
+  if (!canvas) {
+    console.error("❌ Canvas no encontrado.");
+    return;
+  }
 
   canvas.width = width.value;
   canvas.height = height.value;
 
   const ctx = canvas.getContext('2d');
-  if (!ctx) return;
+  if (!ctx) {
+    console.error("❌ No se pudo obtener el contexto 2D.");
+    return;
+  }
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = backgroundColor1.value;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  console.log("✅ Canvas dibujado correctamente.");
 };
 
 // 🔥 Aplicar efectos solo al texto
 const applyEffects = () => {
-  console.log("📢 Aplicando efectos solo al texto con duración:", duration.value);
+  console.log("📢 Aplicando efectos:", activeEffects.value);
+
+  if (!textRef.value) {
+    console.error("❌ No se encontró el elemento de texto.");
+    return;
+  }
 
   const effectsArray = [...activeEffects.value];
 
@@ -70,17 +86,29 @@ const applyEffects = () => {
       case 'spin':
         gsap.to(textRef.value, { rotateZ: 360, duration: duration.value });
         break;
-      case 'typewriter':
-        let currentText = '';
-        const textArray = phrase.value.split('');
-        gsap.to(textArray, {
-          duration: duration.value,
-          ease: 'none',
-          onUpdate: () => {
-            currentText += textArray.shift() || '';
-            textRef.value.innerText = currentText;
-          }
-        });
+      case 'bounce':
+        gsap.fromTo(textRef.value, { y: -50, opacity: 0 }, { y: 0, opacity: 1, duration: duration.value, ease: "bounce.out" });
+        break;
+      case 'blur-in':
+        gsap.fromTo(textRef.value, { filter: "blur(10px)", opacity: 0 }, { filter: "blur(0px)", opacity: 1, duration: duration.value });
+        break;
+      case 'flicker':
+        gsap.fromTo(textRef.value, { opacity: 0 }, { opacity: 1, repeat: 3, yoyo: true, duration: duration.value / 4 });
+        break;
+      case 'skew-in':
+        gsap.fromTo(textRef.value, { skewX: 30, opacity: 0 }, { skewX: 0, opacity: 1, duration: duration.value });
+        break;
+      case 'wave':
+        gsap.fromTo(textRef.value, { x: -10 }, { x: 10, duration: duration.value / 4, repeat: -1, yoyo: true, ease: "sine.inOut" });
+        break;
+      case 'neon-glow':
+        gsap.to(textRef.value, { textShadow: "0px 0px 20px #ff00ff", duration: duration.value, repeat: -1, yoyo: true });
+        break;
+      case 'rotate-in':
+        gsap.fromTo(textRef.value, { rotate: -180, opacity: 0 }, { rotate: 0, opacity: 1, duration: duration.value });
+        break;
+      case 'stretch':
+        gsap.fromTo(textRef.value, { scaleY: 0.2, opacity: 0 }, { scaleY: 1, opacity: 1, duration: duration.value });
         break;
       default:
         console.warn(`⚠️ Efecto desconocido: ${effect}`);
@@ -106,14 +134,9 @@ watch([backgroundColor1], async () => {
   drawBackgroundOnCanvas();
 });
 
-// 🔄 Actualiza el tamaño de la fuente dinámicamente
-watch(fontSize, () => {
-  if (textRef.value) {
-    textRef.value.style.fontSize = `${fontSize.value}px`;
-  }
-});
-
+// 🔄 Asegurar que el lienzo y texto se inicializan correctamente
 onMounted(async () => {
+  console.log("✅ Canvas montado correctamente.");
   await nextTick();
   drawBackgroundOnCanvas();
 });
@@ -122,5 +145,8 @@ onMounted(async () => {
 <style scoped>
 .animated-text {
   position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>
